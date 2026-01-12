@@ -44,7 +44,8 @@ SHA256:
 • /subscribe — подписать текущий чат на новости об обновлении лаунчера;
 • /unsubscribe — отменить подписку;
 • /show — показать текущую версию и ссылки на загрузку;
-• /start — сменить язык (только в ЛС).
+• /start — сменить язык (только в ЛС);
+• /help — Показать справку.
 
 👥 <b>В группах:</b>
 Просто добавьте бота в группу и сделайте его администратором (необязательно, но желательно для стабильной работы). Используйте команды с тегом бота, если включена защита от спама, например: <code>/subscribe@hytale_watcher_bot</code>.`,
@@ -70,14 +71,15 @@ SHA256:
 • /subscribe — subscribe the current chat to news about launcher updates;
 • /unsubscribe — unsubscribe;
 • /show — show the current version and download links;
-• /start — change the language (in private messages only).
+• /start — change the language (in private messages only);
+• /help — Show help.
 
 👥 <b>In groups:</b>
 Simply add the bot to the group and make it an administrator (optional, but recommended for stable operation). Use commands with the bot tag if spam protection is enabled, for example: <code>/subscribe@hytale_watcher_bot</code>.`,
 	},
 }
 
-const HytaleLinksTemplate = `📊 <b>Hytale Launcher: %s</b>
+const HytaleLinksTemplate = `📊 <b>Hytale Launcher:</b> <code>%s</code>
 
 SHA256:
 <b>Windows</b>: <code>%s</code>
