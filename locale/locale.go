@@ -47,7 +47,7 @@ SHA256:
 • /start — сменить язык (только в ЛС).
 
 👥 <b>В группах:</b>
-Просто добавьте бота в группу и сделайте его администратором (необязательно, но желательно для стабильной работы). Используйте команды с тегом бота, если включена защита от спама, например: <code>/subscribe@название_вашего_бота</code>.`,
+Просто добавьте бота в группу и сделайте его администратором (необязательно, но желательно для стабильной работы). Используйте команды с тегом бота, если включена защита от спама, например: <code>/subscribe@hytale_watcher_bot</code>.`,
 	},
 	EN: {
 		SubscribeSuccess:   "✅ Subscribed / You will receive update notifications.",
@@ -73,7 +73,7 @@ SHA256:
 • /start — change the language (in private messages only).
 
 👥 <b>In groups:</b>
-Simply add the bot to the group and make it an administrator (optional, but recommended for stable operation). Use commands with the bot tag if spam protection is enabled, for example: <code>/subscribe@yourbotname</code>.`,
+Simply add the bot to the group and make it an administrator (optional, but recommended for stable operation). Use commands with the bot tag if spam protection is enabled, for example: <code>/subscribe@hytale_watcher_bot</code>.`,
 	},
 }
 
