@@ -44,7 +44,7 @@ SHA256:
 • /subscribe — подписать текущий чат на новости об обновлении лаунчера;
 • /unsubscribe — отменить подписку;
 • /show — показать текущую версию и ссылки на загрузку;
-• /start — сменить язык (только в ЛС);
+• /start — сменить язык (автоматическая подписка на обновления версии);
 • /help — Показать справку.
 
 👥 <b>В группах:</b>
@@ -71,7 +71,7 @@ SHA256:
 • /subscribe — subscribe the current chat to news about launcher updates;
 • /unsubscribe — unsubscribe;
 • /show — show the current version and download links;
-• /start — change the language (in private messages only);
+• /start — change the language (automatic subscription to version updates);
 • /help — Show help.
 
 👥 <b>In groups:</b>
