@@ -20,7 +20,7 @@ where `TOKEN` is the generated token for your bot in `@BotFather`
 
 2. Bot settings for group interaction: enable `Allow Groups` and `Delete Messages` within `Group Admin Rights`; the `Manage Group` rule within `Group Admin Rights` will be enabled automatically, but it cannot be removed separately; it will be re-enabled.
 3. Commands:
-- `/start` - Select language (automatic subscription to version updates);
+- `/start` - Select language (automatic subscription to version updates after selecting a language);
 - `/subscribe` - Subscribe to version updates;
 - `/unsubscribe` - Unsubscribe from version updates;
 - `/show` - Show the version and download links for the launcher;
@@ -44,7 +44,7 @@ HYTALE_WATCHER_BOT_TOKEN=TOKEN
 
 2. Настройки бота для взаимодействия внутри группы: разрешить `Allow Groups` и `Delete Messages` внутри `Group Admin Rights`; правило `Manage Group` внутри `Group Admin Rights` разрешится автоматически, но убрать его отдельно не получится, он разрешится вновь
 3. Команды:
-- `/start` - Выбрать язык (автоматическая подписка на обновления версии);
+- `/start` - Выбрать язык (автоматическая подписка на обновления версии после выбора языка);
 - `/subscribe` - Подписаться на обновление версии;
 - `/unsubscribe` - Отписаться от обновления версии;
 - `/show` - Показать версию и ссылки для загрузки лаунчера;
