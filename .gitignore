@@ -1,4 +1,7 @@
 .env
+.env.test
+*.db-shm
+*.db-wal
 hytale-watcher-bot
 hytale-watcher-bot.exe
 hytale_watcher_bot.db
