@@ -76,10 +76,11 @@ SHA256:
 		ShowTimerNever: "⏳ Таймер ещё не запущен",
 		ShowTimerUntil: "⏱ Следующая проверка через %d мин %d сек",
 		AdminStats: `📊 <b>Статистика подписчиков</b>
-
 👥 Всего: <b>%d</b>
 🇷🇺 RU: <b>%d</b>
-🇬🇧 EN: <b>%d</b>`,
+🇬🇧 EN: <b>%d</b>
+
+📊 <b>Количество проверок обновлений: %s</b>`,
 		AdminForceCheck: "✅ Проверка обновлений запущена вручную",
 	},
 	EN: {
@@ -115,11 +116,12 @@ SHA256:
 Simply add the bot to the group and make it an administrator (optional, but recommended for stable operation). Use commands with the bot tag if spam protection is enabled, for example: <code>/subscribe@hytale_watcher_bot</code>.`,
 		ShowTimerNever: "⏳ The timer has not started yet",
 		ShowTimerUntil: "⏱ Next check in %d min %d sec",
-		AdminStats: `📊 <b>Subscriber statistics</b>
-
+		AdminStats: `📊 <b>Subscriber statistics:</b>
 👥 Total: <b>%d</b>
 🇷🇺 RU: <b>%d</b>
-🇬🇧 EN: <b>%d</b>`,
+🇬🇧 EN: <b>%d</b>
+
+📊 <b>Number of update checks: %s</b>`,
 		AdminForceCheck: "✅ Check for updates started manually",
 	},
 }

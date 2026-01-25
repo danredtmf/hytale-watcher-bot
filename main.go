@@ -67,12 +67,13 @@ const (
 	DarwinJRELinkCurrent  = "https://launcher.hytale.com/redist/jre/darwin/arm64/jre-%s.tar.gz"
 	LinuxJRELinkCurrent   = "https://launcher.hytale.com/redist/jre/windows/amd64/jre-%s.zip"
 
-	DBSelectSettingsKey       = "SELECT value FROM settings WHERE key = '%s'"
-	DBInsertSettingsKey       = "INSERT OR REPLACE INTO settings (key, value) VALUES ('%s', ?)"
+	DBNextCheckTimeKey = "next_check_time"
+	DBCheckCounterKey  = "check_counter"
+
+	DBSelectSettingsKey       = "SELECT value FROM settings WHERE key = ?"
+	DBInsertSettingsKey       = "INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)"
 	DBInsertOrIgnoreSubscribe = "INSERT OR IGNORE INTO subscribers (user_id, lang_key) VALUES (?, ?)"
 )
-
-const DBNextCheckTimeKey = "next_check_time"
 
 var (
 	lastRequest         = make(map[int64]time.Time)
@@ -180,6 +181,8 @@ func check(ctx context.Context, bot *telego.Bot, db *sql.DB, dataDiffs [2]*Versi
 	checks[1] = checkVersion(db, locale.CheckJRE, dataDiffs[1], settingsNamesArr[1])
 
 	sendBroadcast(ctx, bot, db, dataDiffs, checks)
+
+	incrementCheckCounter(db)
 }
 
 func checkVersion(db *sql.DB, checkType locale.CheckType, dataDiff *VersionDiff, settingsNames SettingsNames) (isNewVersionAvailable bool) {
@@ -206,8 +209,8 @@ func checkVersion(db *sql.DB, checkType locale.CheckType, dataDiff *VersionDiff,
 	}
 
 	var lastVersion, lastCombinedHash string
-	_ = db.QueryRow(fmt.Sprintf(DBSelectSettingsKey, settingsNames.Keys[0])).Scan(&lastVersion)
-	_ = db.QueryRow(fmt.Sprintf(DBSelectSettingsKey, settingsNames.Keys[1])).Scan(&lastCombinedHash)
+	_ = db.QueryRow(DBSelectSettingsKey, settingsNames.Keys[0]).Scan(&lastVersion)
+	_ = db.QueryRow(DBSelectSettingsKey, settingsNames.Keys[1]).Scan(&lastCombinedHash)
 
 	hashes := make([]string, 3)
 	hashes[0], hashes[1], hashes[2] = "n/a", "n/a", "n/a"
@@ -230,8 +233,8 @@ func checkVersion(db *sql.DB, checkType locale.CheckType, dataDiff *VersionDiff,
 		dataDiff.SHA256Previous = lastCombinedHash
 		dataDiff.SHA256Current = currentCombinedHash
 
-		_, _ = db.Exec(fmt.Sprintf(DBInsertSettingsKey, settingsNames.Keys[0]), data.Version)
-		_, _ = db.Exec(fmt.Sprintf(DBInsertSettingsKey, settingsNames.Keys[1]), currentCombinedHash)
+		_, _ = db.Exec(DBInsertSettingsKey, settingsNames.Keys[0], data.Version)
+		_, _ = db.Exec(DBInsertSettingsKey, settingsNames.Keys[1], currentCombinedHash)
 
 		return true
 	}
@@ -533,30 +536,30 @@ func showTimer(ctx context.Context, bot *telego.Bot, chatID int64, lang locale.L
 	_, _ = bot.SendMessage(ctx, tu.Message(tu.ID(chatID), text))
 }
 
-func adminStats(ctx context.Context, bot *telego.Bot, db *sql.DB,
-	chatID int64, lang locale.Lang,
-) {
+func adminStats(ctx context.Context, bot *telego.Bot, db *sql.DB, chatID int64, lang locale.Lang) {
 	if chatID != adminID {
 		return
 	}
 
-	var total int
-	var ru int
-	var en int
+	var total, ru, en int
+	var checkCounter string
 
 	_ = db.QueryRow("SELECT COUNT(*) FROM subscribers").Scan(&total)
 	_ = db.QueryRow("SELECT COUNT(*) FROM subscribers WHERE lang_key = 'ru'").Scan(&ru)
 	_ = db.QueryRow("SELECT COUNT(*) FROM subscribers WHERE lang_key = 'en'").Scan(&en)
 
+	// Извлекаем значение счетчика из таблицы настроек
+	err := db.QueryRow(DBSelectSettingsKey, DBCheckCounterKey).Scan(&checkCounter)
+	if err != nil || checkCounter == "" {
+		checkCounter = "0"
+	}
+
 	text := fmt.Sprintf(
 		locale.Get(lang, locale.AdminStats),
-		total, ru, en,
+		total, ru, en, checkCounter,
 	)
 
-	_, _ = bot.SendMessage(ctx,
-		tu.Message(tu.ID(chatID), text).
-			WithParseMode(telego.ModeHTML),
-	)
+	_, _ = bot.SendMessage(ctx, tu.Message(tu.ID(chatID), text).WithParseMode(telego.ModeHTML))
 }
 
 func adminForceCheck(ctx context.Context, bot *telego.Bot, db *sql.DB, chatID int64, lang locale.Lang) {
@@ -586,17 +589,12 @@ func adminForceCheck(ctx context.Context, bot *telego.Bot, db *sql.DB, chatID in
 }
 
 func saveNextCheckTime(db *sql.DB, t time.Time) {
-	_, _ = db.Exec(
-		fmt.Sprintf(DBInsertSettingsKey, DBNextCheckTimeKey),
-		strconv.FormatInt(t.Unix(), 10),
-	)
+	_, _ = db.Exec(DBInsertSettingsKey, DBNextCheckTimeKey, strconv.FormatInt(t.Unix(), 10))
 }
 
 func loadNextCheckTime(db *sql.DB) time.Time {
 	var v string
-	err := db.QueryRow(
-		fmt.Sprintf(DBSelectSettingsKey, DBNextCheckTimeKey),
-	).Scan(&v)
+	err := db.QueryRow(DBSelectSettingsKey, DBNextCheckTimeKey).Scan(&v)
 
 	if err != nil {
 		return time.Time{}
@@ -608,4 +606,13 @@ func loadNextCheckTime(db *sql.DB) time.Time {
 	}
 
 	return time.Unix(sec, 0)
+}
+
+func incrementCheckCounter(db *sql.DB) {
+	// Этот запрос создаст запись со значением 1, если её нет,
+	// или увеличит существующее значение на 1.
+	_, _ = db.Exec(`
+        INSERT INTO settings (key, value) VALUES (?, '1')
+        ON CONFLICT(key) DO UPDATE SET value = CAST(CAST(value AS INTEGER) + 1 AS TEXT)
+    `, DBCheckCounterKey)
 }
